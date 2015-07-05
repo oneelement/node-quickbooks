@@ -536,23 +536,6 @@ QuickBooks.prototype.getEstimate = function(id, callback) {
 }
 
 /**
- * Emails the Estimate PDF from QuickBooks to the address supplied in Estimate.BillEmail.EmailAddress
- * or the specified 'sendTo' address
- *
- * @param  {string} Id - The Id of persistent Estimate
- * @param  {string} sendTo - optional email address to send the PDF to. If not provided, address supplied in Estimate.BillEmail.EmailAddress will be used
- * @param  {function} callback - Callback function which is called with any error and the Estimate PDF
- */
-QuickBooks.prototype.sendEstimatePdf = function(id, sendTo, callback) {
-  var path = '/estimate/' + id + '/send'
-  callback = _.isFunction(sendTo) ? sendTo : callback
-  if (sendTo && ! _.isFunction(sendTo)) {
-    path += '?sendTo=' + sendTo
-  }
-  module.request(this, 'post', {url: path}, null, module.unwrap(callback, 'Estimate'))
-}
-
-/**
  * Retrieves the Invoice from QuickBooks
  *
  * @param  {string} Id - The Id of persistent Invoice
@@ -1751,7 +1734,6 @@ module.request = function(context, verb, options, entity, callback) {
   }
   if (options.url.match(/pdf$/)) {
     opts.headers['accept'] = 'application/pdf'
-    opts.encoding = null
   }
   if (entity !== null) {
     opts.body = entity
@@ -1829,8 +1811,7 @@ module.query = function(context, entity, criteria, callback) {
             .replace(/</, '%3C')
             .replace(/>/, '%3E')
             .replace(/\&/g, '%26')
-            .replace(/\#/g, '%23')
-            .replace(/\\/g, '%5C')
+            .replace(/\#/g, '%23');
   }
   url = url.replace('@@', '=')
   module.request(context, 'get', {url: url}, null, typeof criteria === 'function' ? criteria : callback)
@@ -1916,7 +1897,11 @@ module.criteriaToString = function(criteria) {
       sql += ' and '
     }
     sql += criterion.field + ' ' + criterion.operator + ' '
-    sql += "'" + criterion.value + "'"
+    if(criterion.operator !== "IN"){
+      sql += "'" + criterion.value + "'"
+    } else {
+      sql += criterion.value
+    }
   }
   if (sql != '') {
     sql = ' where ' + sql
