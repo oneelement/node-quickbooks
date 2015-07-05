@@ -1823,6 +1823,8 @@ module.query = function(context, entity, criteria, callback) {
     url += module.criteriaToString(criteria) || ''
     url = url.replace(/%/, '%25')
             .replace(/'/g, '%27')
+            .replace(/\(/g, '%28')
+            .replace(/\)/g, '%29')
             .replace(/=/, '%3D')
             .replace(/</, '%3C')
             .replace(/>/, '%3E')
