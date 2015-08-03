@@ -380,7 +380,7 @@ QuickBooks.prototype.createTaxAgency = function(taxAgency, callback) {
  * @param  {function} callback - Callback function which is called with any error and the persistent TaxService
  */
 QuickBooks.prototype.createTaxService = function(taxService, callback) {
-  module.create(this, 'taxService', taxService, callback)
+  module.create(this, 'taxservice/taxcode', taxService, callback)
 }
 
 /**
