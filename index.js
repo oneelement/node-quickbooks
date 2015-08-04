@@ -1803,7 +1803,7 @@ module.query = function(context, entity, criteria, callback) {
   }
   if (criteria && typeof criteria !== 'function') {
     url += module.criteriaToString(criteria) || ''
-    url = url.replace(/%/, '%25')
+    /*url = url.replace(/%/, '%25')
             .replace(/'/g, '%27')
             .replace(/\(/g, '%28')
             .replace(/\)/g, '%29')
@@ -1811,7 +1811,8 @@ module.query = function(context, entity, criteria, callback) {
             .replace(/</, '%3C')
             .replace(/>/, '%3E')
             .replace(/\&/g, '%26')
-            .replace(/\#/g, '%23');
+            .replace(/\#/g, '%23');*/
+    url = encodeURI(url);
   }
   url = url.replace('@@', '=')
   module.request(context, 'get', {url: url}, null, typeof criteria === 'function' ? criteria : callback)
