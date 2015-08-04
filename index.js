@@ -1812,7 +1812,7 @@ module.query = function(context, entity, criteria, callback) {
             .replace(/>/, '%3E')
             .replace(/\&/g, '%26')
             .replace(/\#/g, '%23');*/
-    url = encodeURI(url);
+    url = encodeURIComponent(url);
   }
   url = url.replace('@@', '=')
   module.request(context, 'get', {url: url}, null, typeof criteria === 'function' ? criteria : callback)
