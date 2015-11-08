@@ -1803,14 +1803,14 @@ module.query = function(context, entity, criteria, callback) {
   }
   if (criteria && typeof criteria !== 'function') {
     var critString = module.criteriaToString(criteria) || ''
-    critString = critString.replace(/%/, '%25')
+    critString = critString.replace(/\%/g, '%25')
         .replace(/ /g, '%20')
         .replace(/'/g, '%27')
         .replace(/\(/g, '%28')
         .replace(/\)/g, '%29')
-        .replace(/=/, '%3D')
-        .replace(/</, '%3C')
-        .replace(/>/, '%3E')
+        .replace(/=/g, '%3D')
+        .replace(/</g, '%3C')
+        .replace(/>/g, '%3E')
         .replace(/\&/g, '%26')
         .replace(/\#/g, '%23')
         .replace(/\\/g, '%5C')
