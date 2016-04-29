@@ -46,7 +46,6 @@ function QuickBooks(consumerKey, consumerSecret, token, tokenSecret, realmId, us
   this.realmId         = eval(prefix + 'realmId')
   this.useSandbox      = eval(prefix + 'useSandbox')
   this.debug           = eval(prefix + 'debug')
-  this.minorVersion    = '?minorversion=6'
   this.endpoint        = this.useSandbox ? QuickBooks.V3_ENDPOINT_BASE_URL : QuickBooks.V3_ENDPOINT_BASE_URL.replace('sandbox-', '')
   this.paymentEndpoint = this.useSandbox ? QuickBooks.PAYMENTS_API_BASE_URL : QuickBooks.PAYMENTS_API_BASE_URL.replace('sandbox.', '')
 }
@@ -64,7 +63,7 @@ function QuickBooks(consumerKey, consumerSecret, token, tokenSecret, realmId, us
  * @param  {function} callback - Callback function which is called with any error and list of BatchItemResponses
  */
 QuickBooks.prototype.batch = function(items, callback) {
-  module.request(this, 'post', {url: '/batch'}, {BatchItemRequest: items}, callback)
+  module.request(this, 'post', {url: '/batch' + '?minorversion=6'}, {BatchItemRequest: items}, callback)
 }
 
 /**
@@ -1723,7 +1722,7 @@ module.request = function(context, verb, options, entity, callback) {
       url = isPayment ? context.paymentEndpoint + options.url :
                         context.endpoint + context.realmId + options.url,
       opts = {
-        url:     url + '?minorversion=6',
+        url:     url,
         qs:      options.qs || {},
         headers: options.headers || {},
         oauth:   module.oauth(context),
@@ -1758,7 +1757,7 @@ module.request = function(context, verb, options, entity, callback) {
 
 // **********************  CRUD Api **********************
 module.create = function(context, entityName, entity, callback) {
-  var url = '/' + entityName.toLowerCase()
+  var url = '/' + entityName.toLowerCase() + '?minorversion=6';
   module.request(context, 'post', {url: url}, entity, module.unwrap(callback, entityName))
 }
 
@@ -1822,7 +1821,7 @@ module.query = function(context, entity, criteria, callback) {
     url += critString;
   }
   url = url.replace('@@', '=')
-  module.request(context, 'get', {url: url}, null, typeof criteria === 'function' ? criteria : callback)
+  module.request(context, 'get', {url: url+ '&minorversion=6'}, null, typeof criteria === 'function' ? criteria : callback)
 }
 
 
