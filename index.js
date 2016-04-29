@@ -46,6 +46,7 @@ function QuickBooks(consumerKey, consumerSecret, token, tokenSecret, realmId, us
   this.realmId         = eval(prefix + 'realmId')
   this.useSandbox      = eval(prefix + 'useSandbox')
   this.debug           = eval(prefix + 'debug')
+  this.minorVersion    = '?minorversion=6'
   this.endpoint        = this.useSandbox ? QuickBooks.V3_ENDPOINT_BASE_URL : QuickBooks.V3_ENDPOINT_BASE_URL.replace('sandbox-', '')
   this.paymentEndpoint = this.useSandbox ? QuickBooks.PAYMENTS_API_BASE_URL : QuickBooks.PAYMENTS_API_BASE_URL.replace('sandbox.', '')
 }
@@ -1722,7 +1723,7 @@ module.request = function(context, verb, options, entity, callback) {
       url = isPayment ? context.paymentEndpoint + options.url :
                         context.endpoint + context.realmId + options.url,
       opts = {
-        url:     url,
+        url:     url + '?minorversion=6',
         qs:      options.qs || {},
         headers: options.headers || {},
         oauth:   module.oauth(context),
