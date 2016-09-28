@@ -1306,6 +1306,16 @@ QuickBooks.prototype.findDepartments = function(criteria, callback) {
 }
 
 /**
+ * Finds all Departments in QuickBooks, optionally matching the specified criteria
+ *
+ * @param  {object} criteria - (Optional) String or single-valued map converted to a where clause of the form "where key = 'value'"
+ * @param  {function} callback - Callback function which is called with any error and the list of Department
+ */
+QuickBooks.prototype.findDeposits = function(criteria, callback) {
+  module.query(this, 'deposit', criteria, callback)
+}
+
+/**
  * Finds all Employees in QuickBooks, optionally matching the specified criteria
  *
  * @param  {object} criteria - (Optional) String or single-valued map converted to a where clause of the form "where key = 'value'"
