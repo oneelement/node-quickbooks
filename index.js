@@ -1104,6 +1104,16 @@ QuickBooks.prototype.deleteCreditMemo = function(idOrEntity, callback) {
 }
 
 /**
+ * Deletes the Deposit from QuickBooks
+ *
+ * @param  {object} idOrEntity - The persistent Deposit to be deleted, or the Id of the Deposit, in which case an extra GET request will be issued to first retrieve the Deposit
+ * @param  {function} callback - Callback function which is called with any error and the status of the persistent Deposit
+ */
+QuickBooks.prototype.deleteDeposit = function(idOrEntity, callback) {
+  module.delete(this, 'deposit', idOrEntity, callback)
+}
+
+/**
  * Deletes the Estimate from QuickBooks
  *
  * @param  {object} idOrEntity - The persistent Estimate to be deleted, or the Id of the Estimate, in which case an extra GET request will be issued to first retrieve the Estimate
