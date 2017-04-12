@@ -1768,7 +1768,11 @@ module.request = function(context, verb, options, entity, callback) {
       console.log(util.inspect(body, {showHidden: false, depth: null}));
     }
     if (callback) {
-      callback(err, body, res.statusCode)
+      var status = undefined;
+      if(res && res.statusCode){
+        status = res.statusCode;
+      }
+      callback(err, body, status)
     } else {
       return
     }
