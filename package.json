@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "moment": "^2.8.2",
+    "node-request-retry": "^1.0.0",
     "node-uuid": "^1.4.1",
     "querystring": "0.2.0",
     "request": "2.65.x",
