@@ -6,8 +6,8 @@
  * @copyright 2014 Michael Cohen
  */
 
-var request = require('node-request-retry'),
-    uuid    = require('node-uuid'),
+var request = require('requestretry'),
+    uuid    = require('uuid'),
     debug   = require('request-debug'),
     util    = require('util'),
     moment  = require('moment'),
