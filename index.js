@@ -12,7 +12,8 @@ var request = require('requestretry'),
     util    = require('util'),
     moment  = require('moment'),
     _       = require('underscore'),
-    version = require('./package.json').version
+    version = require('./package.json').version,
+    jxon    = require('jxon');
 
 module.exports = QuickBooks
 
@@ -20,6 +21,8 @@ QuickBooks.REQUEST_TOKEN_URL          = 'https://oauth.intuit.com/oauth/v1/get_r
 QuickBooks.ACCESS_TOKEN_URL           = 'https://oauth.intuit.com/oauth/v1/get_access_token'
 QuickBooks.APP_CENTER_BASE            = 'https://appcenter.intuit.com'
 QuickBooks.APP_CENTER_URL             = QuickBooks.APP_CENTER_BASE + '/Connect/Begin?oauth_token='
+QuickBooks.RECONNECT_URL              = QuickBooks.APP_CENTER_BASE + '/api/v1/connection/reconnect'
+QuickBooks.DISCONNECT_URL             = QuickBooks.APP_CENTER_BASE + '/api/v1/connection/disconnect'
 QuickBooks.V3_ENDPOINT_BASE_URL       = 'https://sandbox-quickbooks.api.intuit.com/v3/company/'
 QuickBooks.PAYMENTS_API_BASE_URL      = 'https://sandbox.api.intuit.com/quickbooks/v4/payments'
 QuickBooks.QUERY_OPERATORS            = ['=', 'IN', '<', '>', '<=', '>=', 'LIKE']
@@ -1738,18 +1741,20 @@ QuickBooks.prototype.reportAccountListDetail = function(options, callback) {
 }
 
 module.request = function(context, verb, options, entity, callback) {
-  var isPayment = options.url.match(/^\/(charge|tokens)/),
-      url = isPayment ? context.paymentEndpoint + options.url :
-                        context.endpoint + context.realmId + options.url,
-      opts = {
-        url:     url,
-        qs:      options.qs || {},
-        headers: options.headers || {},
-        oauth:   module.oauth(context),
-        json:    true,
-        maxAttempts: 2,
-        retryDelay: 2000
-      }
+  var isPayment = options.url.match(/^\/(charge|tokens)/);
+  var url = isPayment ? context.paymentEndpoint + options.url : context.endpoint + context.realmId + options.url;
+  if (options.url === QuickBooks.RECONNECT_URL || options.url == QuickBooks.DISCONNECT_URL) {
+    url = options.url;
+  }
+  var opts = {
+    url:     url,
+    qs:      options.qs || {},
+    headers: options.headers || {},
+    oauth:   module.oauth(context),
+    json:    true,
+    maxAttempts: 2,
+    retryDelay: 2000
+  };
   opts.headers['User-Agent'] = 'node-quickbooks: version ' + version
   if (isPayment) {
     opts.headers['Request-Id'] = uuid.v1()
@@ -1779,6 +1784,24 @@ module.request = function(context, verb, options, entity, callback) {
       return
     }
   })
+}
+
+module.xmlRequest = function(context, url, rootTag, callback) {
+  module.request(context, 'get', {url:url}, null, (err, body) => {
+    var json =
+        body.constructor === {}.constructor ? body :
+            (body.constructor === "".constructor ?
+                (body.indexOf('<') === 0 ? jxon.stringToJs(body)[rootTag] : body) : body);
+    callback(json.ErrorCode === 0 ? null : json, json);
+  })
+}
+
+QuickBooks.prototype.reconnect = function(callback) {
+  module.xmlRequest(this, QuickBooks.RECONNECT_URL, 'ReconnectResponse', callback);
+}
+
+QuickBooks.prototype.disconnect = function(callback) {
+  module.xmlRequest(this, QuickBooks.DISCONNECT_URL, 'PlatformResponse', callback);
 }
 
 // **********************  CRUD Api **********************
