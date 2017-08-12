@@ -1787,7 +1787,7 @@ module.request = function(context, verb, options, entity, callback) {
 }
 
 module.xmlRequest = function(context, url, rootTag, callback) {
-  module.request(context, 'get', {url:url}, null, (err, body) => {
+  module.request(context, 'get', {url:url}, null, function(err, body) {
     var json =
         body.constructor === {}.constructor ? body :
             (body.constructor === "".constructor ?
